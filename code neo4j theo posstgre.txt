@@ -1,0 +1,344 @@
+CREATE CONSTRAINT IF NOT EXISTS FOR (g:Grade)   REQUIRE g.id IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (b:Book)    REQUIRE b.id IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (s:Subject) REQUIRE s.id IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (t:Topic)   REQUIRE t.id IS UNIQUE;
+CREATE CONSTRAINT IF NOT EXISTS FOR (l:Lesson)  REQUIRE l.id IS UNIQUE;
+
+UNWIND ['L10','L11','L12'] AS grade
+MERGE (:Grade {id:grade});
+
+MERGE (b:Book {id:'KNTT'});
+MERGE (s:Subject {id:'TIN'});
+
+MATCH (b:Book {id:'KNTT'}), (s:Subject {id:'TIN'})
+MERGE (b)-[:HAS_SUBJECT]->(s);
+
+MATCH (g:Grade), (b:Book {id:'KNTT'})
+MERGE (g)-[:HAS_BOOK]->(b);
+
+MATCH (s:Subject {id:'TIN'})
+
+UNWIND [
+  {
+    tid:'L10-KNTT-TIN-C01', tname:'Máy tính và xã hội tri thức',
+    lessons:[
+      ['L10-KNTT-TIN-C01-B01','Thông tin và xử lí thông tin'],
+      ['L10-KNTT-TIN-C01-B02','Vai trò của thiết bị thông minh và tin học'],
+      ['L10-KNTT-TIN-C01-B03','Một số kiểu dữ liệu và dữ liệu văn bản'],
+      ['L10-KNTT-TIN-C01-B04','Hệ nhị phân và dữ liệu số nguyên'],
+      ['L10-KNTT-TIN-C01-B05','Dữ liệu lôgic'],
+      ['L10-KNTT-TIN-C01-B06','Dữ liệu âm thanh và hình ảnh'],
+      ['L10-KNTT-TIN-C01-B07','Thực hành sử dụng thiết bị thông dụng']
+    ]
+  },
+  {
+    tid:'L10-KNTT-TIN-C02', tname:'Mạng máy tính và Internet',
+    lessons:[
+      ['L10-KNTT-TIN-C02-B01','Mạng máy tính trong cuộc sống hiện đại'],
+      ['L10-KNTT-TIN-C02-B02','An toàn trên không gian mạng'],
+      ['L10-KNTT-TIN-C02-B03','Thực hành khai thác tài nguyên trên Internet']
+    ]
+  },
+  {
+    tid:'L10-KNTT-TIN-C03', tname:'Đạo đức, pháp luật và văn hóa trong môi trường số',
+    lessons:[
+      ['L10-KNTT-TIN-C03-B01','Ứng dụng trên môi trường số và nghĩa vụ tôn trọng bản quyền']
+    ]
+  },
+  {
+    tid:'L10-KNTT-TIN-C04', tname:'Ứng dụng tin học',
+    lessons:[
+      ['L10-KNTT-TIN-C04-B01','Phần mềm thiết kế đồ họa'],
+      ['L10-KNTT-TIN-C04-B02','Bổ sung đối tượng đồ họa'],
+      ['L10-KNTT-TIN-C04-B03','Làm việc với đối tượng đường và văn bản'],
+      ['L10-KNTT-TIN-C04-B04','Hoàn thiện hình ảnh đồ họa']
+    ]
+  },
+  {
+    tid:'L10-KNTT-TIN-C05', tname:'Giải quyết vấn đề với sự trợ giúp của máy tính',
+    lessons:[
+      ['L10-KNTT-TIN-C05-B01','Ngôn ngữ lập trình bậc cao và Python'],
+      ['L10-KNTT-TIN-C05-B02','Biến và lệnh gán'],
+      ['L10-KNTT-TIN-C05-B03','Các lệnh vào ra đơn giản'],
+      ['L10-KNTT-TIN-C05-B04','Câu lệnh điều kiện if'],
+      ['L10-KNTT-TIN-C05-B05','Câu lệnh lặp for'],
+      ['L10-KNTT-TIN-C05-B06','Câu lệnh lặp while'],
+      ['L10-KNTT-TIN-C05-B07','Kiểu dữ liệu danh sách'],
+      ['L10-KNTT-TIN-C05-B08','Một số lệnh làm việc với dữ liệu danh sách'],
+      ['L10-KNTT-TIN-C05-B09','Xâu kí tự'],
+      ['L10-KNTT-TIN-C05-B10','Một số lệnh làm việc với xâu kí tự'],
+      ['L10-KNTT-TIN-C05-B11','Hàm trong Python'],
+      ['L10-KNTT-TIN-C05-B12','Tham số của hàm'],
+      ['L10-KNTT-TIN-C05-B13','Phạm vi của biến'],
+      ['L10-KNTT-TIN-C05-B14','Nhận biết lỗi chương trình'],
+      ['L10-KNTT-TIN-C05-B15','Kiểm thử và gỡ lỗi chương trình'],
+      ['L10-KNTT-TIN-C05-B16','Thực hành viết chương trình đơn giản'],
+      ['L10-KNTT-TIN-C05-B17','Ôn tập lập trình Python']
+    ]
+  },
+  {
+    tid:'L10-KNTT-TIN-C06', tname:'Hướng nghiệp với tin học',
+    lessons:[
+      ['L10-KNTT-TIN-C06-B01','Nghề thiết kế đồ họa máy tính'],
+      ['L10-KNTT-TIN-C06-B02','Nghề phát triển phần mềm']
+    ]
+  }
+] AS topic
+
+MERGE (t:Topic {id:topic.tid})
+SET t.name = topic.tname
+MERGE (s)-[:HAS_TOPIC]->(t)
+
+WITH t, topic.lessons AS ls
+UNWIND ls AS l
+MERGE (le:Lesson {id:l[0]})
+SET le.name = l[1]
+MERGE (t)-[:HAS_LESSON]->(le);
+
+MATCH (s:Subject {id:'TIN'})
+
+UNWIND [
+
+/* ===== PHẦN I – KIẾN THỨC CHUNG ===== */
+
+{
+  tid:'L11-KNTT-TIN-C01', tname:'Máy tính và xã hội tri thức',
+  lessons:[
+    ['L11-KNTT-TIN-C01-B01','Hệ điều hành'],
+    ['L11-KNTT-TIN-C01-B02','Thực hành sử dụng hệ điều hành'],
+    ['L11-KNTT-TIN-C01-B03','Phần mềm nguồn mở và phần mềm Internet'],
+    ['L11-KNTT-TIN-C01-B04','Bên trong máy tính'],
+    ['L11-KNTT-TIN-C01-B05','Kết nối máy tính với các thiết bị số']
+  ]
+},
+{
+  tid:'L11-KNTT-TIN-C02', tname:'Tổ chức lưu trữ, tìm kiếm và trao đổi thông tin',
+  lessons:[
+    ['L11-KNTT-TIN-C02-B01','Lưu trữ và chia sẻ tệp tin trên Internet'],
+    ['L11-KNTT-TIN-C02-B02','Thực hành tìm kiếm thông tin trên Internet'],
+    ['L11-KNTT-TIN-C02-B03','Thực hành nâng cao sử dụng thư điện tử và mạng xã hội']
+  ]
+},
+{
+  tid:'L11-KNTT-TIN-C03', tname:'Đạo đức, pháp luật và văn hóa trong môi trường số',
+  lessons:[
+    ['L11-KNTT-TIN-C03-B01','Giao tiếp an toàn trên Internet']
+  ]
+},
+{
+  tid:'L11-KNTT-TIN-C04', tname:'Giới thiệu các hệ cơ sở dữ liệu',
+  lessons:[
+    ['L11-KNTT-TIN-C04-B01','Lưu trữ dữ liệu và khai thác thông tin phục vụ quản lí'],
+    ['L11-KNTT-TIN-C04-B02','Cơ sở dữ liệu'],
+    ['L11-KNTT-TIN-C04-B03','Hệ quản trị cơ sở dữ liệu và hệ cơ sở dữ liệu'],
+    ['L11-KNTT-TIN-C04-B04','Cơ sở dữ liệu quan hệ'],
+    ['L11-KNTT-TIN-C04-B05','SQL – Ngôn ngữ truy vấn có cấu trúc'],
+    ['L11-KNTT-TIN-C04-B06','Bảo mật và an toàn hệ cơ sở dữ liệu']
+  ]
+},
+{
+  tid:'L11-KNTT-TIN-C05', tname:'Hướng nghiệp với tin học',
+  lessons:[
+    ['L11-KNTT-TIN-C05-B01','Công việc quản trị cơ sở dữ liệu']
+  ]
+},
+
+/* ===== PHẦN II – ĐỊNH HƯỚNG CS ===== */
+
+{
+  tid:'L11-KNTT-TIN-C06', tname:'Kĩ thuật lập trình',
+  lessons:[
+    ['L11-KNTT-TIN-C06-B01','Dữ liệu mảng một chiều và hai chiều'],
+    ['L11-KNTT-TIN-C06-B02','Thực hành dữ liệu mảng một chiều và hai chiều'],
+    ['L11-KNTT-TIN-C06-B03','Bài toán tìm kiếm'],
+    ['L11-KNTT-TIN-C06-B04','Thực hành bài toán tìm kiếm'],
+    ['L11-KNTT-TIN-C06-B05','Các thuật toán sắp xếp đơn giản'],
+    ['L11-KNTT-TIN-C06-B06','Thực hành bài toán sắp xếp'],
+    ['L11-KNTT-TIN-C06-B07','Kiểm thử và đánh giá chương trình'],
+    ['L11-KNTT-TIN-C06-B08','Đánh giá độ phức tạp thời gian thuật toán'],
+    ['L11-KNTT-TIN-C06-B09','Thực hành xác định độ phức tạp thời gian'],
+    ['L11-KNTT-TIN-C06-B10','Phương pháp làm mịn dần trong thiết kế chương trình'],
+    ['L11-KNTT-TIN-C06-B11','Thực hành thiết kế chương trình theo phương pháp làm mịn dần'],
+    ['L11-KNTT-TIN-C06-B12','Thiết kế chương trình theo mô đun'],
+    ['L11-KNTT-TIN-C06-B13','Thực hành thiết kế chương trình theo mô đun'],
+    ['L11-KNTT-TIN-C06-B14','Thiết lập thư viện cho chương trình'],
+    ['L11-KNTT-TIN-C06-B15','Thực hành thiết lập thư viện cho chương trình']
+  ]
+},
+
+/* ===== PHẦN III – ĐỊNH HƯỚNG ICT ===== */
+
+{
+  tid:'L11-KNTT-TIN-C07', tname:'Thực hành tạo và khai thác cơ sở dữ liệu',
+  lessons:[
+    ['L11-KNTT-TIN-C07-B01','Quản trị cơ sở dữ liệu trên máy tính'],
+    ['L11-KNTT-TIN-C07-B02','Thực hành xác định cấu trúc bảng và các trường khóa'],
+    ['L11-KNTT-TIN-C07-B03','Thực hành tạo lập cơ sở dữ liệu và các bảng'],
+    ['L11-KNTT-TIN-C07-B04','Thực hành tạo lập các bảng có khóa ngoài'],
+    ['L11-KNTT-TIN-C07-B05','Thực hành cập nhật và truy xuất dữ liệu các bảng'],
+    ['L11-KNTT-TIN-C07-B06','Thực hành cập nhật bảng dữ liệu có tham chiếu'],
+    ['L11-KNTT-TIN-C07-B07','Thực hành truy xuất dữ liệu qua liên kết các bảng'],
+    ['L11-KNTT-TIN-C07-B08','Thực hành sao lưu dữ liệu']
+  ]
+},
+{
+  tid:'L11-KNTT-TIN-C08', tname:'Phần mềm chỉnh sửa ảnh và làm video',
+  lessons:[
+    ['L11-KNTT-TIN-C08-B01','Phần mềm chỉnh sửa ảnh'],
+    ['L11-KNTT-TIN-C08-B02','Công cụ tinh chỉnh màu sắc và công cụ chọn'],
+    ['L11-KNTT-TIN-C08-B03','Công cụ vẽ và một số ứng dụng'],
+    ['L11-KNTT-TIN-C08-B04','Tạo ảnh động'],
+    ['L11-KNTT-TIN-C08-B05','Khám phá phần mềm làm phim'],
+    ['L11-KNTT-TIN-C08-B06','Biên tập phim'],
+    ['L11-KNTT-TIN-C08-B07','Thực hành tạo phim hoạt hình']
+  ]
+}
+
+] AS topic
+
+MERGE (t:Topic {id:topic.tid})
+SET t.name = topic.tname
+MERGE (s)-[:HAS_TOPIC]->(t)
+
+WITH t, topic.lessons AS ls
+UNWIND ls AS l
+MERGE (le:Lesson {id:l[0]})
+SET le.name = l[1]
+MERGE (t)-[:HAS_LESSON]->(le);
+
+MATCH (s:Subject {id:'TIN'})
+
+UNWIND [
+
+/* ===== PHẦN I – KIẾN THỨC CỐT LÕI ===== */
+
+{
+  tid:'L12-KNTT-TIN-C01', tname:'Máy tính và xã hội tri thức',
+  lessons:[
+    ['L12-KNTT-TIN-C01-B01','Làm quen với Trí tuệ nhân tạo'],
+    ['L12-KNTT-TIN-C01-B02','Trí tuệ nhân tạo trong khoa học và đời sống']
+  ]
+},
+{
+  tid:'L12-KNTT-TIN-C02', tname:'Mạng máy tính và Internet',
+  lessons:[
+    ['L12-KNTT-TIN-C02-B01','Một số thiết bị mạng thông dụng'],
+    ['L12-KNTT-TIN-C02-B02','Giao thức mạng'],
+    ['L12-KNTT-TIN-C02-B03','Thực hành chia sẻ tài nguyên trên mạng']
+  ]
+},
+{
+  tid:'L12-KNTT-TIN-C03', tname:'Đạo đức, pháp luật và văn hóa trong môi trường số',
+  lessons:[
+    ['L12-KNTT-TIN-C03-B01','Giao tiếp và ứng xử trong không gian mạng']
+  ]
+},
+{
+  tid:'L12-KNTT-TIN-C04', tname:'Giải quyết vấn đề với sự trợ giúp của máy tính',
+  lessons:[
+    ['L12-KNTT-TIN-C04-B01','HTML và cấu trúc trang web'],
+    ['L12-KNTT-TIN-C04-B02','Định dạng văn bản'],
+    ['L12-KNTT-TIN-C04-B03','Tạo danh sách, bảng'],
+    ['L12-KNTT-TIN-C04-B04','Tạo liên kết'],
+    ['L12-KNTT-TIN-C04-B05','Chèn tệp tin đa phương tiện'],
+    ['L12-KNTT-TIN-C04-B06','Tạo biểu mẫu'],
+    ['L12-KNTT-TIN-C04-B07','Khái niệm, vai trò của CSS'],
+    ['L12-KNTT-TIN-C04-B08','Định dạng văn bản bằng CSS'],
+    ['L12-KNTT-TIN-C04-B09','Tạo màu cho chữ và nền'],
+    ['L12-KNTT-TIN-C04-B10','Định dạng khung'],
+    ['L12-KNTT-TIN-C04-B11','Các mức ưu tiên của bộ chọn'],
+    ['L12-KNTT-TIN-C04-B12','Thực hành tổng hợp thiết kế trang web']
+  ]
+},
+{
+  tid:'L12-KNTT-TIN-C05', tname:'Hướng nghiệp với tin học',
+  lessons:[
+    ['L12-KNTT-TIN-C05-B01','Dịch vụ sửa chữa và bảo trì máy tính'],
+    ['L12-KNTT-TIN-C05-B02','Nhóm nghề quản trị thuộc ngành Công nghệ thông tin'],
+    ['L12-KNTT-TIN-C05-B03','Hội thảo hướng nghiệp']
+  ]
+},
+
+/* ===== PHẦN II – ĐỊNH HƯỚNG CS ===== */
+
+{
+  tid:'L12-KNTT-TIN-C06', tname:'Định hướng khoa học máy tính',
+  lessons:[
+    ['L12-KNTT-TIN-C06-B01','Tìm hiểu thiết bị mạng'],
+    ['L12-KNTT-TIN-C06-B02','Đường truyền mạng và ứng dụng'],
+    ['L12-KNTT-TIN-C06-B03','Sơ bộ về thiết kế mạng'],
+    ['L12-KNTT-TIN-C06-B04','Làm quen với Học máy'],
+    ['L12-KNTT-TIN-C06-B05','Làm quen với Khoa học dữ liệu'],
+    ['L12-KNTT-TIN-C06-B06','Máy tính và Khoa học dữ liệu'],
+    ['L12-KNTT-TIN-C06-B07','Thực hành trải nghiệm trích rút thông tin và tri thức'],
+    ['L12-KNTT-TIN-C06-B08','Mô phỏng trong giải quyết vấn đề'],
+    ['L12-KNTT-TIN-C06-B09','Ứng dụng mô phỏng trong giáo dục']
+  ]
+},
+
+/* ===== PHẦN III – ĐỊNH HƯỚNG ICT ===== */
+
+{
+  tid:'L12-KNTT-TIN-C07', tname:'Ứng dụng tin học',
+  lessons:[
+    ['L12-KNTT-TIN-C07-B01','Thực hành kết nối các thiết bị số'],
+    ['L12-KNTT-TIN-C07-B02','Chuẩn bị xây dựng trang web'],
+    ['L12-KNTT-TIN-C07-B03','Xây dựng phần đầu trang web'],
+    ['L12-KNTT-TIN-C07-B04','Xây dựng phần thân và chân trang web'],
+    ['L12-KNTT-TIN-C07-B05','Liên kết và thanh điều hướng'],
+    ['L12-KNTT-TIN-C07-B06','Biểu mẫu trên trang web'],
+    ['L12-KNTT-TIN-C07-B07','Thực hành tổng hợp']
+  ]
+}
+
+] AS topic
+
+MERGE (t:Topic {id:topic.tid})
+SET t.name = topic.tname
+MERGE (s)-[:HAS_TOPIC]->(t)
+
+WITH t, topic.lessons AS ls
+UNWIND ls AS l
+MERGE (le:Lesson {id:l[0]})
+SET le.name = l[1]
+MERGE (t)-[:HAS_LESSON]->(le);
+
+
+//Kiem tra sau khi chay
+
+MATCH (n) RETURN labels(n), count(n);
+
+
+MATCH (l:Lesson)
+SET l.name_norm = toLower(
+  replace(
+    replace(
+      replace(
+        replace(
+          replace(
+            replace(
+              replace(l.name,
+              'đ','d'),
+            'Đ','d'),
+          'ă','a'),
+        'â','a'),
+      'ê','e'),
+    'ô','o'),
+  'ơ','o')
+);
+
+
+CREATE FULLTEXT INDEX lessonFullText
+FOR (l:Lesson)
+ON EACH [l.name, l.name_norm];
+
+CALL db.index.fulltext.queryNodes(
+  "lessonFullText",
+  "python"
+)
+YIELD node, score
+RETURN node.id, node.name, score
+ORDER BY score DESC;
+
+
+

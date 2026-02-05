@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <h4>ADMIN</h4>
+  <a class="menu" data-section="dashboard" onclick="showSection('dashboard')">🏠 Dashboard</a>
+  <a class="menu" data-section="users" onclick="showSection('users')">👤 Quản lý tài khoản</a>
+  <a class="menu" data-section="storage" onclick="showSection('storage')">📦 Dữ liệu MinIO</a>
+
+  <a class="menu" data-section="search" onclick="showSection('search')">🔍 Tìm kiếm</a>
+  <a class="menu" data-section="import" onclick="showSection('import')">📥 Import dữ liệu</a>
+  <a class="menu" data-section="filter" onclick="showSection('filter')">🧹 Lọc dữ liệu</a>
+  <a class="menu" data-section="crud" onclick="showSection('crud')">🛠 CRUD metadata</a>
+
+  <a href="/logout" class="menu logout">🚪 Logout</a>
+
+
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="section active">
+    <div class="card-box">
+      <h4>Dashboard</h4>
+            {% if request.session.get("upload_msg") %}
+      <div class="alert alert-{{ request.session.get('upload_status') }} alert-dismissible fade show">
+        {{ request.session.get("upload_msg") }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+
+      {% set _ = request.session.pop("upload_msg") %}
+      {% set _ = request.session.pop("upload_status") %}
+      {% endif %}
+
+      <p>Chào mừng admin 👋</p>
+
+      <hr>
+      <h5>Upload file</h5>
+      <form method="post" action="/admin/upload" enctype="multipart/form-data">
+        <select name="bucket" class="form-select mb-2">
+          <option value="document">Document</option>
+          <option value="image">Image</option>
+          <option value="video">Video</option>
+        </select>
+
+        <select name="folder" class="form-select mb-2">
+          <option value="tin10">Tin 10</option>
+          <option value="tin11">Tin 11</option>
+          <option value="tin12">Tin 12</option>
+        </select>
+
+        <input type="file" name="file" class="form-control mb-2">
+        <button class="btn btn-success">Upload</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- USERS -->
+  <div id="users" class="section">
+    <div class="card-box">
+      <h4>Quản lý tài khoản</h4>
+      <iframe src="/admin/users" style="width:100%;height:600px;border:none"></iframe>
+    </div>
+  </div>
+
+  <!-- STORAGE -->
+  <div id="storage" class="section">
+  <div class="card-box">
+    <h4>Dữ liệu MinIO</h4>
+
+    <form method="get" class="row g-2 mb-3">
+      <input type="hidden" name="section" value="storage">    
+      <div class="col">
+        <select name="bucket" class="form-control">
+          <option value="document">Document</option>
+          <option value="image">Image</option>
+          <option value="video">Video</option>
+        </select>
+      </div>
+
+      <div class="col">
+        <select name="folder" class="form-control">
+          <option value="tin10">Tin 10</option>
+          <option value="tin11">Tin 11</option>
+          <option value="tin12">Tin 12</option>
+        </select>
+      </div>
+
+      <div class="col">
+        <button class="btn btn-primary">Xem</button>
+      </div>
+    </form>
+
+    <table class="table table-bordered">
+      <tr>
+        <th>#</th>
+        <th>Tên file</th>
+      </tr>
+      {% for f in files %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ f }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div id="filter" class="section">
+    <div class="card-box">
+      <h4>🧹 Lọc dữ liệu</h4>
+      <p class="text-muted">Lọc theo lớp, môn học, loại file, tag (đang phát triển)</p>
+  
+      <select class="form-select mb-2">
+        <option>Lớp 10</option>
+        <option>Lớp 11</option>
+        <option>Lớp 12</option>
+      </select>
+  
+      <select class="form-select mb-2">
+        <option>Document</option>
+        <option>Image</option>
+        <option>Video</option>
+      </select>
+  
+      <button class="btn btn-secondary" disabled>Lọc</button>
+    </div>
+  </div>
+  
+  <div id="crud" class="section">
+    <div class="card-box">
+      <h4>🛠 CRUD Metadata</h4>
+      <p class="text-muted">
+        Chỉnh sửa, cập nhật metadata tài liệu (backend đang phát triển)
+      </p>
+  
+      <input class="form-control mb-2" placeholder="Tên tài liệu">
+      <input class="form-control mb-2" placeholder="Tags">
+      <textarea class="form-control mb-2" placeholder="Mô tả"></textarea>
+  
+      <button class="btn btn-warning" disabled>Cập nhật</button>
+      <button class="btn btn-danger ms-2" disabled>Xóa</button>
+    </div>
+  </div>
+  
+</div>
+
+<div id="search" class="section">
+  <div class="card-box">
+    <h4>🔍 Tìm kiếm dữ liệu</h4>
+    <p class="text-muted">
+      Hỗ trợ tìm kiếm theo văn bản, hình ảnh và video (backend đang phát triển)
+    </p>
+
+    <!-- SEARCH TEXT -->
+    <div class="mb-4">
+      <h6>🔤 Tìm kiếm bằng văn bản</h6>
+      <input type="text" class="form-control mb-2" placeholder="Nhập nội dung cần tìm...">
+      <button class="btn btn-primary" disabled>Tìm kiếm</button>
+    </div>
+
+    <!-- SEARCH IMAGE -->
+    <div class="mb-4">
+      <h6>🖼️ Tìm kiếm bằng hình ảnh</h6>
+      <input type="file" class="form-control mb-2" accept="image/*">
+      <button class="btn btn-primary" disabled>Tìm kiếm</button>
+    </div>
+
+    <!-- SEARCH VIDEO -->
+    <div class="mb-4">
+      <h6>🎥 Tìm kiếm bằng video</h6>
+      <input type="file" class="form-control mb-2" accept="video/*">
+      <button class="btn btn-primary" disabled>Tìm kiếm</button>
+    </div>
+
+    <div class="alert alert-info">
+      🔧 Chức năng backend đang được phát triển
+    </div>
+  </div>
+</div>
+
+
+
+
+<div id="import" class="section">
+  <div class="card-box">
+    <h4>📥 Import dữ liệu hàng loạt</h4>
+
+    <form method="post" action="/admin/import" enctype="multipart/form-data">
+      <select name="bucket" class="form-select mb-2">
+        <option value="document">Document</option>
+        <option value="image">Image</option>
+        <option value="video">Video</option>
+      </select>
+
+      <select name="folder" class="form-select mb-2">
+        <option value="tin10">Tin 10</option>
+        <option value="tin11">Tin 11</option>
+        <option value="tin12">Tin 12</option>
+      </select>
+
+      <input type="file" name="files" multiple class="form-control mb-2">
+      <button class="btn btn-primary">Import</button>
+    </form>
+  </div>
+</div>
+
+<!-- JS -->
+<script>
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  
+    document.querySelectorAll('.menu').forEach(m => m.classList.remove('active'));
+    document.querySelector(`.menu[data-section="${id}"]`)?.classList.add('active');
+  }
+  
+  // 🔑 TỰ ĐỘNG MỞ SECTION TỪ URL (?section=storage)
+  const params = new URLSearchParams(window.location.search);
+  const section = params.get("section") || "dashboard";
+  showSection(section);
+  </script>
+  
+
+</body>
+</html>

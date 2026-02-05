@@ -1,0 +1,73 @@
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: #f5f6fa;
+    color: #212529;
+  }
+  
+  /* SIDEBAR */
+  .sidebar {
+    width: 240px;
+    height: 100vh;
+    position: fixed;
+    background: #1e1e2f;
+    color: #fff;
+  }
+  
+  .sidebar h4 {
+    padding: 20px;
+    margin: 0;
+    text-align: center;
+    background: #151521;
+    font-weight: 600;
+  }
+  
+  .sidebar a {
+    display: block;
+    padding: 14px 20px;
+    color: #e4e6eb;
+    text-decoration: none;
+    font-size: 15px;
+  }
+  
+  .sidebar a:hover,
+  .sidebar a.active {
+    background: #343454;
+    color: #ffffff;
+  }
+  
+  .sidebar a.logout {
+    color: #ff6b6b;
+  }
+  
+  /* CONTENT */
+  .content {
+    margin-left: 240px;
+    padding: 25px;
+  }
+  
+  .section {
+    display: none;
+  }
+  
+  .section.active {
+    display: block;
+  }
+  
+  .card-box {
+    background: #ffffff;
+    border-radius: 6px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  }
+
+  .menu.disabled {
+    color: #9aa0b3 !important;
+    cursor: not-allowed;
+  }
+  
+  .menu.disabled:hover {
+    background: none;
+    color: #9aa0b3;
+  }
+  

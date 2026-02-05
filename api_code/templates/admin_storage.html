@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dữ liệu MinIO</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container mt-4">
+
+<h4>📦 Dữ liệu MinIO</h4>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col">
+    <select name="bucket" class="form-control">
+      <option value="document" {% if bucket=='document' %}selected{% endif %}>Document</option>
+      <option value="image" {% if bucket=='image' %}selected{% endif %}>Image</option>
+      <option value="video" {% if bucket=='video' %}selected{% endif %}>Video</option>
+    </select>
+  </div>
+
+  <div class="col">
+    <select name="folder" class="form-control">
+      <option value="tin10" {% if folder=='tin10' %}selected{% endif %}>Tin 10</option>
+      <option value="tin11" {% if folder=='tin11' %}selected{% endif %}>Tin 11</option>
+      <option value="tin12" {% if folder=='tin12' %}selected{% endif %}>Tin 12</option>
+    </select>
+  </div>
+
+  <div class="col">
+    <button class="btn btn-primary">Xem</button>
+  </div>
+</form>
+
+<table class="table table-bordered">
+  <tr>
+    <th>#</th>
+    <th>Tên file</th>
+  </tr>
+  {% for f in files %}
+  <tr>
+    <td>{{ loop.index }}</td>
+    <td>{{ f }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<a href="/admin" class="btn btn-secondary">⬅ Dashboard</a>
+
+</body>
+</html>

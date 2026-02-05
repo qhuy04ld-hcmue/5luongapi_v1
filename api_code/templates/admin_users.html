@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quản lý tài khoản</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container mt-4">
+
+<h4>👤 Quản lý tài khoản</h4>
+
+<form method="post" action="/admin/users/add" class="row g-2 mb-3">
+  <div class="col">
+    <input class="form-control" name="username" placeholder="Username">
+  </div>
+  <div class="col">
+    <input class="form-control" name="password" placeholder="Password">
+  </div>
+  <div class="col">
+    <select class="form-control" name="role">
+      <option value="admin">Admin</option>
+      <option value="user">User</option>
+    </select>
+  </div>
+  <div class="col">
+    <button class="btn btn-primary">Thêm</button>
+  </div>
+</form>
+
+<table class="table table-bordered">
+  <tr>
+    <th>ID</th><th>Username</th><th>Role</th><th>Action</th>
+  </tr>
+  {% for u in users %}
+  <tr>
+    <td>{{ u[0] }}</td>
+    <td>{{ u[1] }}</td>
+    <td>{{ u[2] }}</td>
+    <td>
+      <a href="/admin/users/edit/{{u[0]}}" class="btn btn-warning btn-sm">Sửa</a>
+      <form method="post" action="/admin/users/delete" style="display:inline">
+        <input type="hidden" name="user_id" value="{{u[0]}}">
+        <button class="btn btn-danger btn-sm">Xóa</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<a href="/admin" class="btn btn-secondary">⬅ Dashboard</a>
+
+</body>
+</html>
